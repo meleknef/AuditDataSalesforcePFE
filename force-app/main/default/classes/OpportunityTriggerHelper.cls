@@ -1,37 +1,84 @@
 public with sharing class OpportunityTriggerHelper {
-    public OpportunityTriggerHelper() {
+   public OpportunityTriggerHelper() {   }
+   List<AuditOpportunity__c> logs = new List<AuditOpportunity__c>();
 
-    }
-    public static void sendMail(String address, String subject, String body) {
-        // Create an email message object
-        Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-        String[] toAddresses = new String[] {address};
-        mail.setToAddresses(toAddresses);
-        mail.setSubject(subject);
-        mail.setPlainTextBody(body);
-        // Pass this email message to the built-in sendEmail method 
-        // of the Messaging class
-        Messaging.SendEmailResult[] results = Messaging.sendEmail(
-                                  new Messaging.SingleEmailMessage[] { mail });
-        // Call a helper method to inspect the returned results
-       inspectResults(results);
-        System.debug('object has been created');
+   public  AuditOpportunity__c insertOpportunity(SObject objHelper) {
+       AuditOpportunity__c obj = new AuditOpportunity__c();
+       obj.ObjectId__c = objHelper.Id;
+       obj.ChangeDate__c = Date.today();
+       obj.Action__c = 'insert';
+       obj.ConcernedObject__c = objHelper.getsobjecttype().getdescribe().getname();
+       obj.Concerned_User__c = UserInfo.getUserId();
+       return obj;
      }
-     public static Boolean inspectResults(Messaging.SendEmailResult[] results) {
-        Boolean sendResult = true;
-        // sendEmail returns an array of result objects.
-        // Iterate through the list to inspect results. 
-        // In this class, the methods send only one email, 
-        // so we should have only one result.
-        for (Messaging.SendEmailResult res : results) {
-           if (res.isSuccess()) {
-              System.debug('Email sent successfully');
-           }
-           else {
-              sendResult = false;
-              System.debug('The following errors occurred: ' + res.getErrors());                 
-           }
-        }
-        return sendResult;
+     public void sendNotification(String action, String verbe) {
+       List <AuditOpportunity__c>lsss = [SELECT Id, ConcernedObject__c, ChangeDate__c from AuditOpportunity__c 
+       ORDER BY ChangeDate__c DESC];
+       CustomNotificationType notificationType = 
+       [SELECT Id
+        FROM CustomNotificationType 
+        WHERE DeveloperName='Opportunity_Notify'];
+     
+   
+       // Create a new custom notification
+       Messaging.CustomNotification notification = new Messaging.CustomNotification();
+   
+       // Set the contents for the notification
+       notification.setTitle(action);
+       notification.setBody(
+         UserInfo.getName() +
+         ' has '+verbe +' an ' +
+         lsss[0].ConcernedObject__c
+       );
+   
+       // Set the notification type and target
+       notification.setNotificationTypeId(notificationType.Id);
+       notification.setTargetId(lsss[0].Id);
+   
+       try {
+         notification.send(new Set<String>{UserInfo.getUserId()});
+       } catch (Exception e) {
+         System.debug('Problem sending notification: ' + e.getMessage());
+       }
      }
+   public AuditOpportunity__c updateHelper(
+    SObject nv,
+    SObject old,
+    Map<String, Schema.SObjectField> mapFields
+    ) {
+
+     AuditOpportunity__c obj = new AuditOpportunity__c();
+   for (String str : mapFields.keyset()) {
+     if (
+       nv.get(str) != old.get(str) 
+       &&!(String.valueof(str).equals('lastmodifieddate')) &&
+       !(String.valueof(str).equals('systemmodstamp'))
+     ) {
+       obj.Action__c = 'update';
+       obj.ObjectId__c = (Id) old.get('Id');
+       obj.Name = (String)old.get('Name');
+       obj.Concerned_User__c = UserInfo.getUserId();
+       obj.ConcernedObject__c = nv.getsobjecttype().getdescribe().getname();
+       obj.ConcernedField__c = String.valueof(str);
+       obj.OldValue__c = String.valueof(old.get(str));
+       obj.NewValue__c = String.valueof(nv.get(str));
+       obj.ChangeDate__c = Date.today();
+       return obj;
+     }
+   }
+  
+   return obj;
+
+ }
+ public AuditOpportunity__c deleteOpportunity(SObject objHelper) {
+  
+   AuditOpportunity__c obj = new AuditOpportunity__c();
+   obj.ChangeDate__c = Date.today();
+   obj.Action__c = 'delete';
+   String IdObj= (Id) objHelper.get('Id');
+   obj.ObjectId__c = IdObj;
+   obj.ConcernedObject__c = objHelper.getsobjecttype().getdescribe().getname();
+   obj.Concerned_User__c = UserInfo.getUserId();
+   return obj;
+ }
 }

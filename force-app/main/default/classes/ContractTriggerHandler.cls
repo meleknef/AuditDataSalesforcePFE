@@ -1,35 +1,30 @@
-public with sharing class ContactTriggerHandler implements ITrigger {
+public with sharing class ContractTriggerHandler implements ITrigger {
+    ContractTriggerHelper hp= new ContractTriggerHelper();
+    List<Contract> newItems = (List<Contract>) Trigger.new;
+    List<Contract> oldItems = (List<Contract>) Trigger.old;
 
-    ContactTriggerHelper hp= new ContactTriggerHelper();
-    List<Contact> newItems = (List<Contact>) Trigger.new;
-    List<Contact> oldItems = (List<Contact>) Trigger.old;
-
-    List<AuditContact__c> loggs = new List<AuditContact__c>();
-
+    List<AuditContract__c> loggs = new List<AuditContract__c>();
 
 
-    public ContactTriggerHandler() {
 
-    }
+    public ContractTriggerHandler() {}
     public void bulkBefore() {
         if(trigger.isInsert) {
         //Here we will call before insert actions
-        //Here we will call after insert actions
-       
         }
     }
         
         
     public void bulkAfter() {
         if(trigger.isInsert) {
-            
+            //Here we will call after insert actions
     
-            for (Contact c : newItems) {
+            for (Contract c : newItems) {
                 
-                loggs.add(hp.insertContact(c));}
+                loggs.add(hp.insertContract(c));}
         
               
-              if (Schema.sObjectType.Contact.iscreateable()) {
+              if (Schema.sObjectType.Contract.iscreateable()) {
                 insert(loggs);
                 hp.sendNotification('Insert', 'inserted');
             
@@ -39,12 +34,12 @@ public with sharing class ContactTriggerHandler implements ITrigger {
         else if(trigger.isUpdate) {
         //Here we will call after update actions
 
-            Map<String, Schema.SObjectField> mapFields = Schema.SObjectType.Contact.fields.getMap();
-            for (Contact gpl : newItems) {
-              Contact oldGPL = (Contact)Trigger.oldMap.get(gpl.Id);
+            Map<String, Schema.SObjectField> mapFields = Schema.SObjectType.Contract.fields.getMap();
+            for (Contract gpl : newItems) {
+              Contract oldGPL = (Contract)Trigger.oldMap.get(gpl.Id);
               loggs.add(hp.updateHelper(gpl, oldGPL, mapFields));
             }
-            if (Schema.sObjectType.Contact.iscreateable()) { 
+            if (Schema.sObjectType.Contract.iscreateable()) { 
                 insert(loggs);
                 hp.sendNotification('Update','updated');
                 
@@ -52,8 +47,8 @@ public with sharing class ContactTriggerHandler implements ITrigger {
 
         } else if(trigger.isDelete) {
         //Here we will call after delete actions
-        for (Contact c : oldItems) {
-            loggs.add(hp.deleteContact(c));
+        for (Contract c : oldItems) {
+            loggs.add(hp.deleteContract(c));
           }
           insert(loggs);
           hp.sendNotification('Delete','deleted');
@@ -63,5 +58,4 @@ public with sharing class ContactTriggerHandler implements ITrigger {
         }
       
 
-	
 }

@@ -23,9 +23,21 @@ public with sharing class TriggerFactory {
     if(soType == Contact.sObjectType) {
     return new ContactTriggerHandler();
     }
-    //else if(soType == Contact.sObjectType) {
-     //   return new ContactTriggerHandler();
-    //    }
+    else if(soType == Opportunity.sObjectType) {
+        return new OpportunityTriggerHandler();
+        }
+    else if(soType == Account.sObjectType) {
+        return new AccountTriggerHandler();
+            }
+    else if(soType == Lead.sObjectType) {
+        return new LeadTriggerHandler();
+            }
+    else if(soType == Product2.sObjectType) {
+        return new ProductTriggerHandler();
+            }
+    else if(soType == Contract.sObjectType) {
+        return new ContractTriggerHandler();
+            }
     
     return null;
     }

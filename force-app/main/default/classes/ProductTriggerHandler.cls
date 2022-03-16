@@ -1,14 +1,16 @@
-public with sharing class OpportunityTriggerHandler implements ITrigger {
+public with sharing class ProductTriggerHandler  implements ITrigger{
+   
+    ProductTriggerHelper hp= new ProductTriggerHelper();
+    List<Product2> newItems = (List<Product2>) Trigger.new;
+    List<Product2> oldItems = (List<Product2>) Trigger.old;
 
-    OpportunityTriggerHelper hp= new OpportunityTriggerHelper();
-    List<Opportunity> newItems = (List<Opportunity>) Trigger.new;
-    List<Opportunity> oldItems = (List<Opportunity>) Trigger.old;
-
-    List<AuditOpportunity__c> loggs = new List<AuditOpportunity__c>();
+    List<AuditProduct__c> loggs = new List<AuditProduct__c>();
 
 
 
-    public OpportunityTriggerHandler() {  }
+    public ProductTriggerHandler() {  }
+
+    
     public void bulkBefore() {
         if(trigger.isInsert) {
         //Here we will call before insert actions
@@ -22,12 +24,12 @@ public with sharing class OpportunityTriggerHandler implements ITrigger {
         if(trigger.isInsert) {
             
     
-            for (Opportunity c : newItems) {
+            for (Product2 c : newItems) {
                 
-                loggs.add(hp.insertOpportunity(c));}
+                loggs.add(hp.insertProduct(c));}
         
               
-              if (Schema.sObjectType.Opportunity.iscreateable()) {
+              if (Schema.sObjectType.Product2.iscreateable()) {
                 insert(loggs);
                 hp.sendNotification('Insert', 'inserted');
             
@@ -37,12 +39,12 @@ public with sharing class OpportunityTriggerHandler implements ITrigger {
         else if(trigger.isUpdate) {
         //Here we will call after update actions
 
-            Map<String, Schema.SObjectField> mapFields = Schema.SObjectType.Opportunity.fields.getMap();
-            for (Opportunity gpl : newItems) {
-              Opportunity oldGPL = (Opportunity)Trigger.oldMap.get(gpl.Id);
+            Map<String, Schema.SObjectField> mapFields = Schema.SObjectType.Product2.fields.getMap();
+            for (Product2 gpl : newItems) {
+              Product2 oldGPL = (Product2)Trigger.oldMap.get(gpl.Id);
               loggs.add(hp.updateHelper(gpl, oldGPL, mapFields));
             }
-            if (Schema.sObjectType.Opportunity.iscreateable()) { 
+            if (Schema.sObjectType.Product2.iscreateable()) { 
                 insert(loggs);
                 hp.sendNotification('Update','updated');
                 
@@ -50,8 +52,8 @@ public with sharing class OpportunityTriggerHandler implements ITrigger {
 
         } else if(trigger.isDelete) {
         //Here we will call after delete actions
-        for (Opportunity c : oldItems) {
-            loggs.add(hp.deleteOpportunity(c));
+        for (Product2 c : oldItems) {
+            loggs.add(hp.deleteProduct(c));
           }
           insert(loggs);
           hp.sendNotification('Delete','deleted');
@@ -59,5 +61,4 @@ public with sharing class OpportunityTriggerHandler implements ITrigger {
         //Here we will call after undelete actions
         }
         }
-      
-    }
+}

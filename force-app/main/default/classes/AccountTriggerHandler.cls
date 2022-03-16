@@ -1,35 +1,31 @@
-public with sharing class ContactTriggerHandler implements ITrigger {
+public with sharing class AccountTriggerHandler implements ITrigger{
 
-    ContactTriggerHelper hp= new ContactTriggerHelper();
-    List<Contact> newItems = (List<Contact>) Trigger.new;
-    List<Contact> oldItems = (List<Contact>) Trigger.old;
+    AccountTriggerHelper hp= new AccountTriggerHelper();
+    List<Account> newItems = (List<Account>) Trigger.new;
+    List<Account> oldItems = (List<Account>) Trigger.old;
 
-    List<AuditContact__c> loggs = new List<AuditContact__c>();
+    List<AuditAccount__c> loggs = new List<AuditAccount__c>();
 
 
 
-    public ContactTriggerHandler() {
-
-    }
+    public AccountTriggerHandler() {}
     public void bulkBefore() {
         if(trigger.isInsert) {
         //Here we will call before insert actions
-        //Here we will call after insert actions
-       
         }
     }
         
         
     public void bulkAfter() {
         if(trigger.isInsert) {
-            
+            //Here we will call after insert actions
     
-            for (Contact c : newItems) {
+            for (Account c : newItems) {
                 
-                loggs.add(hp.insertContact(c));}
+                loggs.add(hp.insertAccount(c));}
         
               
-              if (Schema.sObjectType.Contact.iscreateable()) {
+              if (Schema.sObjectType.Account.iscreateable()) {
                 insert(loggs);
                 hp.sendNotification('Insert', 'inserted');
             
@@ -39,12 +35,12 @@ public with sharing class ContactTriggerHandler implements ITrigger {
         else if(trigger.isUpdate) {
         //Here we will call after update actions
 
-            Map<String, Schema.SObjectField> mapFields = Schema.SObjectType.Contact.fields.getMap();
-            for (Contact gpl : newItems) {
-              Contact oldGPL = (Contact)Trigger.oldMap.get(gpl.Id);
+            Map<String, Schema.SObjectField> mapFields = Schema.SObjectType.Account.fields.getMap();
+            for (Account gpl : newItems) {
+              Account oldGPL = (Account)Trigger.oldMap.get(gpl.Id);
               loggs.add(hp.updateHelper(gpl, oldGPL, mapFields));
             }
-            if (Schema.sObjectType.Contact.iscreateable()) { 
+            if (Schema.sObjectType.Account.iscreateable()) { 
                 insert(loggs);
                 hp.sendNotification('Update','updated');
                 
@@ -52,8 +48,8 @@ public with sharing class ContactTriggerHandler implements ITrigger {
 
         } else if(trigger.isDelete) {
         //Here we will call after delete actions
-        for (Contact c : oldItems) {
-            loggs.add(hp.deleteContact(c));
+        for (Account c : oldItems) {
+            loggs.add(hp.deleteAccount(c));
           }
           insert(loggs);
           hp.sendNotification('Delete','deleted');
@@ -63,5 +59,5 @@ public with sharing class ContactTriggerHandler implements ITrigger {
         }
       
 
-	
+
 }

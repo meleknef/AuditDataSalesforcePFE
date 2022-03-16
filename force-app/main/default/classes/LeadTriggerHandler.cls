@@ -1,14 +1,16 @@
-public with sharing class OpportunityTriggerHandler implements ITrigger {
+public with sharing class LeadTriggerHandler implements ITrigger {
 
-    OpportunityTriggerHelper hp= new OpportunityTriggerHelper();
-    List<Opportunity> newItems = (List<Opportunity>) Trigger.new;
-    List<Opportunity> oldItems = (List<Opportunity>) Trigger.old;
+    LeadTriggerHelper hp= new LeadTriggerHelper();
+    List<Lead> newItems = (List<Lead>) Trigger.new;
+    List<Lead> oldItems = (List<Lead>) Trigger.old;
 
-    List<AuditOpportunity__c> loggs = new List<AuditOpportunity__c>();
+    List<AuditLead__c> loggs = new List<AuditLead__c>();
 
 
 
-    public OpportunityTriggerHandler() {  }
+    public LeadTriggerHandler() {
+
+    }
     public void bulkBefore() {
         if(trigger.isInsert) {
         //Here we will call before insert actions
@@ -22,12 +24,12 @@ public with sharing class OpportunityTriggerHandler implements ITrigger {
         if(trigger.isInsert) {
             
     
-            for (Opportunity c : newItems) {
+            for (Lead c : newItems) {
                 
-                loggs.add(hp.insertOpportunity(c));}
+                loggs.add(hp.insertLead(c));}
         
               
-              if (Schema.sObjectType.Opportunity.iscreateable()) {
+              if (Schema.sObjectType.Lead.iscreateable()) {
                 insert(loggs);
                 hp.sendNotification('Insert', 'inserted');
             
@@ -37,12 +39,12 @@ public with sharing class OpportunityTriggerHandler implements ITrigger {
         else if(trigger.isUpdate) {
         //Here we will call after update actions
 
-            Map<String, Schema.SObjectField> mapFields = Schema.SObjectType.Opportunity.fields.getMap();
-            for (Opportunity gpl : newItems) {
-              Opportunity oldGPL = (Opportunity)Trigger.oldMap.get(gpl.Id);
+            Map<String, Schema.SObjectField> mapFields = Schema.SObjectType.Lead.fields.getMap();
+            for (Lead gpl : newItems) {
+              Lead oldGPL = (Lead)Trigger.oldMap.get(gpl.Id);
               loggs.add(hp.updateHelper(gpl, oldGPL, mapFields));
             }
-            if (Schema.sObjectType.Opportunity.iscreateable()) { 
+            if (Schema.sObjectType.Lead.iscreateable()) { 
                 insert(loggs);
                 hp.sendNotification('Update','updated');
                 
@@ -50,8 +52,8 @@ public with sharing class OpportunityTriggerHandler implements ITrigger {
 
         } else if(trigger.isDelete) {
         //Here we will call after delete actions
-        for (Opportunity c : oldItems) {
-            loggs.add(hp.deleteOpportunity(c));
+        for (Lead c : oldItems) {
+            loggs.add(hp.deleteLead(c));
           }
           insert(loggs);
           hp.sendNotification('Delete','deleted');
@@ -60,4 +62,6 @@ public with sharing class OpportunityTriggerHandler implements ITrigger {
         }
         }
       
-    }
+
+	
+}
