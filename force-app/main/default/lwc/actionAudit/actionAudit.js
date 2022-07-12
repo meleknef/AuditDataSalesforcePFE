@@ -1,11 +1,13 @@
 import { LightningElement, api } from 'lwc';
-import chartjs from '@salesforce/resourceUrl/ChartJs';
+import chartjs from '@salesforce/resourceUrl/ChartJS';
+//import chartjs from '@salesforce/resourceUrl/ChartJSss';
 import { loadScript } from 'lightning/platformResourceLoader';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class ActionAudit extends LightningElement {
     @api chartConfig;
- 
+    
+
     isChartJsInitialized;
     renderedCallback() {
         if (this.isChartJsInitialized) {
@@ -16,6 +18,10 @@ export default class ActionAudit extends LightningElement {
             .then(() => {
                 this.isChartJsInitialized = true;
                 const ctx = this.template.querySelector('canvas.barChart').getContext('2d');
+                console.log('choooo',this.template.querySelector('canvas.barChart').getContext('2d'));
+                //console.log('choooo canva',canvas.barChart);
+                console.log('Yoooo');
+                
                 this.chart = new window.Chart(ctx, JSON.parse(JSON.stringify(this.chartConfig)));
             })
             .catch(error => {
@@ -28,4 +34,5 @@ export default class ActionAudit extends LightningElement {
                 );
             });
     }
+    
 }

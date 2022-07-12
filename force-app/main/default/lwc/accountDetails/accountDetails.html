@@ -1,0 +1,152 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 04-07-2022
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+    <lightning-card>
+        <!--=======================back button=======================-->
+        <div class="demo-only demo-only--sizing slds-grid slds-wrap slds-m-around_medium">
+            <div class="slds-size_1-of-8">
+                <lightning-button-icon  icon-name="utility:back"   
+                                    alternative-text="Back to Audits" 
+                                    class="slds-m-left_xx-small" 
+                                    onclick={backToAudit}>
+                </lightning-button-icon>
+            </div>
+            <!--****************Search bar****************-->
+            <div class="slds-size_5-of-8">
+                <lightning-input 
+                    type="search" 
+                    onchange={handleKeyChange} 
+                    class="slds-m-bottom_small"           
+                    value={searchKey}
+                    placeholder="Search">
+                </lightning-input>
+            </div>
+            <div class="slds-size_2-of-8 slds-p-around_medium lgc-bg">
+                <lightning-button-icon icon-name="utility:email" alternative-text="send repport" title="Send repport" onclick={sendReportMail}></lightning-button-icon>
+                <lightning-button-icon icon-name="utility:file"  alternative-text="view repport" title="View repport" onclick={viewRapport}></lightning-button-icon>
+                <!-- Neutral variant (deletedeleted __x) >
+                <lightning-button label="deleteDeletedX" title="Non-primary action" onclick={deleteDeletedX} class="slds-m-left_x-small"></lightning-button-->
+        
+            </div>
+        </div>
+    </lightning-card>
+    <br>
+    <!--***************total action number****************-->
+    <div class="demo-only demo-only--sizing slds-grid slds-wrap" >
+        <div class="slds-size_4-of-12">
+            <lightning-card title='Actions for Account'>
+                <br>
+                <lightning-layout-item flexibility="auto">
+                    <!--div style="font-size: 150px ; text-align: center" -->
+                    <div style="font-size: 100px ; text-align: center" >
+                         {totalRecountCount}
+                    </div>
+                    <br>
+                </lightning-layout-item>
+            </lightning-card>
+            <lightning-card title='deleted Account'>
+                <br>
+                <lightning-layout-item flexibility="auto">
+                    
+                    <!--div style="font-size: 150px ; text-align: center" -->
+                    <div style="font-size: 100px ; text-align: center" >
+                         {totalRecountCountb}
+                    </div>
+                    <br>
+                </lightning-layout-item>
+            </lightning-card>
+             <!--***************pie Chart****************-->
+            <div >
+                <c-account-chart></c-account-chart>
+            </div>
+        </div>
+
+        <!--****************data table audit****************-->
+        <div class="slds-size_8-of-12">
+            <lightning-card title="Accounts audit ">
+                <lightning-datatable 
+                    data-id="table" 
+                    key-field="Id" 
+                    data={data} 
+                    columns={columns} 
+                    sorted-by={sortedBy}
+                    hide-checkbox-column
+                    sorted-direction={sortedDirection}
+                    onsort={sortColumns}
+                    row-number-offset={rowOffset} 
+                    show-row-number-column
+                    onrowaction={handleRowAction}>
+                    <!--
+                    onrowselection ={onRowSelection} 
+                    selected-rows={allSelectedRows}  -->
+                    
+               </lightning-datatable>
+               </br>
+    
+                <lightning-layout horizontal-align="space">
+                    <lightning-layout-item flexibility="auto">
+                        <lightning-button 
+                            label="Previous" 
+                            icon-name="utility:chevronleft" 
+                            onclick={previousHandler}>
+                        </lightning-button>
+                    </lightning-layout-item>
+                    <lightning-layout-item flexibility="auto">
+                        Page {page} of {totalPage}
+                    </lightning-layout-item>
+                    <lightning-layout-item flexibility="auto">
+                        <lightning-button 
+                            label="Next" 
+                            icon-name="utility:chevronright" 
+                            icon-position="right"
+                            onclick={nextHandler}>
+                        </lightning-button>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </lightning-card>        
+            <!--****************data table backup*********
+            *************//data-id="tableback" *******-->
+                <lightning-card title="Deleted Accounts ">
+                <lightning-datatable 
+                    key-field="Idb" 
+                    data={allData} 
+                    columns={backs} 
+                    sorted-by={sortedByb}
+                    hide-checkbox-column
+                    sorted-direction={sortedDirectionb}
+                    onsort={sortColumnsb}
+                    show-row-number-column
+                    row-number-offset={rowOffsetb} 
+                    onrowaction={bbbackup}>
+               </lightning-datatable>
+               </br>
+                <lightning-layout horizontal-align="space">
+                    <lightning-layout-item flexibility="auto">
+                        <lightning-button 
+                            label="Previous" 
+                            icon-name="utility:chevronleft" 
+                            onclick={previousHandlerb}>
+                        </lightning-button>
+                    </lightning-layout-item>
+                    <lightning-layout-item flexibility="auto">
+                        Page {pageb} of {totalPageb}
+                    </lightning-layout-item>
+                    <lightning-layout-item flexibility="auto">
+                        <lightning-button 
+                            label="Next" 
+                            icon-name="utility:chevronright" 
+                            icon-position="right"
+                            onclick={nextHandlerb}>
+                        </lightning-button>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </lightning-card>
+        </div>
+        
+    </div>
+</template>

@@ -1,0 +1,10 @@
+<apex:page id="MainPage"
+           showHeader="false" 
+           cache="true"
+           contentType="application/x-pdf#AccountRepportOfThisMonth.pdf">
+           
+
+    <!-- Here comes another page with a content to be converted to PDF -->
+    <apex:include pageName="ListAuditAccountPdf"/>
+
+</apex:page>

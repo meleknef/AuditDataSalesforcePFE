@@ -5,10 +5,12 @@ public with sharing class OpportunityTriggerHelper {
    public  AuditOpportunity__c insertOpportunity(SObject objHelper) {
        AuditOpportunity__c obj = new AuditOpportunity__c();
        obj.ObjectId__c = objHelper.Id;
+       obj.ObjectName__c = (String)objHelper.get('Name');
        obj.ChangeDate__c = Date.today();
        obj.Action__c = 'insert';
        obj.ConcernedObject__c = objHelper.getsobjecttype().getdescribe().getname();
        obj.Concerned_User__c = UserInfo.getUserId();
+       obj.UserName__c = UserInfo.getName();
        return obj;
      }
      public void sendNotification(String action, String verbe) {
@@ -56,8 +58,10 @@ public with sharing class OpportunityTriggerHelper {
      ) {
        obj.Action__c = 'update';
        obj.ObjectId__c = (Id) old.get('Id');
-       obj.Name = (String)old.get('Name');
+       //obj.Name = (String)old.get('Name');
+       obj.ObjectName__c = (String)old.get('Name');
        obj.Concerned_User__c = UserInfo.getUserId();
+       obj.UserName__c = UserInfo.getName();
        obj.ConcernedObject__c = nv.getsobjecttype().getdescribe().getname();
        obj.ConcernedField__c = String.valueof(str);
        obj.OldValue__c = String.valueof(old.get(str));
@@ -73,12 +77,39 @@ public with sharing class OpportunityTriggerHelper {
  public AuditOpportunity__c deleteOpportunity(SObject objHelper) {
   
    AuditOpportunity__c obj = new AuditOpportunity__c();
+   deleted_records__x delt = new deleted_records__x();
    obj.ChangeDate__c = Date.today();
    obj.Action__c = 'delete';
    String IdObj= (Id) objHelper.get('Id');
+   obj.ObjectName__c = (String)objHelper.get('Name');
    obj.ObjectId__c = IdObj;
    obj.ConcernedObject__c = objHelper.getsobjecttype().getdescribe().getname();
    obj.Concerned_User__c = UserInfo.getUserId();
+   obj.UserName__c = UserInfo.getName();
+   obj.Deleted__c = true;
+   obj.Backup__c	= false;
+   List<AuditOpportunity__c> lss = [SELECT Id FROM AuditOpportunity__c WHERE ObjectId__c LIKE :idObj];
+   for (AuditOpportunity__c c : lss){
+     c.Deleted__c = true;
+     c.Backup__c	= false;
+   }
+   DataBase.update(lss);
+
+   Blob data = Blob.valueOf(String.valueOf(JSON.serialize(objHelper)));
+   Blob cryptoKey = Crypto.generateAesKey(256);
+   Blob encryptedData = Crypto.encryptWithManagedIV('AES256', cryptoKey, data);
+   String aa =  EncodingUtil.base64Encode(encryptedData);
+   delt.deleted_records__c = EncodingUtil.base64Encode(encryptedData);
+   delt.id__c = (Id) objHelper.get('Id');
+   delt.key__c = EncodingUtil.base64Encode(cryptoKey);
+   delt.deleted_date__c = Date.today();
+   delt.deleted_user__c = UserInfo.getName();
+   delt.object__c = objHelper.getsobjecttype().getdescribe().getname();
+   
+   Database.insertAsync(delt);
+   System.debug('delt: ');
+   System.debug(aa);
+
    return obj;
  }
 }

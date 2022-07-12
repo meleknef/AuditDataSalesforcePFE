@@ -7,38 +7,24 @@ public with sharing class LeadTriggerHandler implements ITrigger {
     List<AuditLead__c> loggs = new List<AuditLead__c>();
 
 
-
-    public LeadTriggerHandler() {
-
-    }
+    public LeadTriggerHandler() {  }
     public void bulkBefore() {
         if(trigger.isInsert) {
-        //Here we will call before insert actions
-        //Here we will call after insert actions
-       
+        //Here we will call before insert actions       
         }
     }
         
-        
     public void bulkAfter() {
         if(trigger.isInsert) {
-            
-    
             for (Lead c : newItems) {
-                
                 loggs.add(hp.insertLead(c));}
-        
-              
               if (Schema.sObjectType.Lead.iscreateable()) {
                 insert(loggs);
-                hp.sendNotification('Insert', 'inserted');
-            
+                hp.sendNotification('Insert', 'inserted'); 
             }
-        
         } 
         else if(trigger.isUpdate) {
         //Here we will call after update actions
-
             Map<String, Schema.SObjectField> mapFields = Schema.SObjectType.Lead.fields.getMap();
             for (Lead gpl : newItems) {
               Lead oldGPL = (Lead)Trigger.oldMap.get(gpl.Id);
@@ -57,9 +43,9 @@ public with sharing class LeadTriggerHandler implements ITrigger {
           }
           insert(loggs);
           hp.sendNotification('Delete','deleted');
-        } else if(trigger.isUndelete) {
+        } //else if(trigger.isUndelete) {
         //Here we will call after undelete actions
-        }
+        //}
         }
       
 

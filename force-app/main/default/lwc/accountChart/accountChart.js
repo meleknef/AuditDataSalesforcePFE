@@ -3,6 +3,7 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import chartjs from '@salesforce/resourceUrl/ChartJS';
 import { loadScript } from 'lightning/platformResourceLoader';
 import getAccountActions from '@salesforce/apex/AuditActions.getAccountActions';
+import getAcct from '@salesforce/apex/ListAudit.getAcct';
 
 
 export default class AccountChart extends LightningElement {
@@ -17,14 +18,18 @@ export default class AccountChart extends LightningElement {
    {
    data: [
    ],
-   backgroundColor :[
-      "rgb(255, 219, 81)",
-
-      "rgb(247, 177, 69)",
-   
-      "rgb(161, 116, 47)"
-   ],
-      label:'Dataset 1'
+   backgroundColor:  [
+      'rgba(255, 99, 132, 0.2)',
+      'rgba(75, 192, 192, 0.2)',
+      'rgba(201, 203, 207, 0.2)'
+      ],
+   borderColor: [
+          'rgb(255, 99, 132)',
+          'rgb(75, 192, 192)',
+          'rgb(201, 203, 207)'
+        ],
+   borderWidth: 1,
+   label:'Dataset 1'
    }
    ],
    labels:[]
@@ -55,15 +60,16 @@ animation:{
        this.chart = new window.Chart(ctx, this.config);
      })
      .catch(error =>{
-       this.dispatchEvent(
-       new ShowToastEvent({
-       title : 'Error loading ChartJS',
-       message : error.message,
-       variant : 'error',
-      }),
-     );
-   });
+         this.dispatchEvent(
+            new ShowToastEvent({
+               title : 'Error loading ChartJS',
+               message : error.message,
+               variant : 'error',
+            }),
+         );
+      });
    getAccountActions().then((data,error) => {
+   //getAcct().then((data,error) => {
     this.listAA=data;
 
    if(this.listAA)

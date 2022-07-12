@@ -21,7 +21,7 @@ public with sharing class TriggerFactory {
     
     private static ITrigger getHandler(Schema.sObjectType soType) {
     if(soType == Contact.sObjectType) {
-    return new ContactTriggerHandler();
+        return new ContactTriggerHandler();
     }
     else if(soType == Opportunity.sObjectType) {
         return new OpportunityTriggerHandler();
@@ -42,4 +42,3 @@ public with sharing class TriggerFactory {
     return null;
     }
     }
-    

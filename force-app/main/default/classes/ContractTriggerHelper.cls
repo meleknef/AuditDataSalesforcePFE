@@ -12,6 +12,8 @@ public with sharing class ContractTriggerHelper {
         obj.Action__c = 'insert';
         obj.ConcernedObject__c = objHelper.getsobjecttype().getdescribe().getname();
         obj.Concerned_User__c = UserInfo.getUserId();
+        obj.UserName__c = UserInfo.getName();
+        obj.ObjectName__c = (String)objHelper.get('ContractNumber');
         return obj;
       }
       public void sendNotification(String action, String verbe) {
@@ -60,7 +62,9 @@ public with sharing class ContractTriggerHelper {
         obj.Action__c = 'update';
         obj.ObjectId__c = (Id) old.get('Id');
         obj.Name = (String)old.get('Name');
+        obj.ObjectName__c = (String)old.get('ContractNumber');
         obj.Concerned_User__c = UserInfo.getUserId();
+        obj.UserName__c = UserInfo.getName();
         obj.ConcernedObject__c = nv.getsobjecttype().getdescribe().getname();
         obj.ConcernedField__c = String.valueof(str);
         obj.OldValue__c = String.valueof(old.get(str));
@@ -76,12 +80,38 @@ public with sharing class ContractTriggerHelper {
   public AuditContract__c deleteContract(SObject objHelper) {
    
     AuditContract__c obj = new AuditContract__c();
+    deleted_records__x delt = new deleted_records__x();
     obj.ChangeDate__c = Date.today();
     obj.Action__c = 'delete';
     String IdObj= (Id) objHelper.get('Id');
+    obj.ObjectName__c = (String)objHelper.get('ContractNumber');
     obj.ObjectId__c = IdObj;
     obj.ConcernedObject__c = objHelper.getsobjecttype().getdescribe().getname();
     obj.Concerned_User__c = UserInfo.getUserId();
+    obj.UserName__c = UserInfo.getName();
+    obj.Deleted__c = true;
+    obj.Backup__c	= false;
+    List<AuditContract__c> lss = [SELECT Id FROM AuditContract__c WHERE ObjectId__c LIKE :idObj];
+    for (AuditContract__c c : lss){
+      c.Deleted__c = true;
+      c.Backup__c	= false;
+    }
+    DataBase.update(lss);
+
+    Blob data = Blob.valueOf(String.valueOf(JSON.serialize(objHelper)));
+    Blob cryptoKey = Crypto.generateAesKey(256);
+    Blob encryptedData = Crypto.encryptWithManagedIV('AES256', cryptoKey, data);
+    String aa =  EncodingUtil.base64Encode(encryptedData);
+    delt.deleted_records__c = EncodingUtil.base64Encode(encryptedData);
+    delt.id__c = (Id) objHelper.get('Id');
+    delt.key__c = EncodingUtil.base64Encode(cryptoKey);
+    delt.deleted_date__c = Date.today();
+    delt.deleted_user__c = UserInfo.getName();
+    delt.object__c = objHelper.getsobjecttype().getdescribe().getname();    
+    Database.insertAsync(delt);
+    System.debug('delt: ');
+    System.debug(aa);
+
     return obj;
   }
 }

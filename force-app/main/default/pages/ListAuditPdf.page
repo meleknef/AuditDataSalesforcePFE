@@ -1,0 +1,123 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 04-04-2022
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<apex:page controller="ListAuditPdf"
+           readOnly="true"     
+           applyHtmlTag="false"     
+           sidebar="false"     
+           showHeader="false"     
+           cache="true"     
+           renderAs="PDF" >
+ <head>    
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />    
+        <style type="text/css">    
+            
+            @page {    
+              
+                size: A4 landscape;    
+                border: 2px solid black;    
+                padding-left: 8px;    
+                padding-right: 8px;      
+                  
+            }    
+                
+            th {    
+              
+                text-align: center;    
+                font-weight: bold;    
+                  
+            }    
+                
+                
+            td {    
+              
+                text-align: center;    
+                font-size: 14px;    
+                  
+            }    
+                
+        </style> 
+        
+    </head>    
+       <center>    
+      
+        <h3>Audit de la semaine : {!DAY(TODAY()) - 6} / {!MONTH(TODAY())} / {!YEAR(TODAY())} ==> {!DAY(TODAY())} / {!MONTH(TODAY())} / {!YEAR(TODAY())}</h3>    
+          
+
+    </center><br/>   
+    <table border="1" width="99%">    
+      
+        <tr>    
+          
+            <th>Nom d'objet / Ref</th>
+            <th>Objet</th>    
+            <th>Action</th> 
+            <th>Date</th>    
+            <th>Utilisateur</th>       
+              
+        </tr>   
+
+        <apex:repeat value="{!Records}" var="Record">    
+            <tr>    
+                <td>{!Record.Name}</td>
+                <td>{!Record.ConcernedObject__c}</td>    
+                <td>{!Record.Action__c}</td>    
+                <td>{!Record.ChangeDate__c}</td> 
+                <td>{!Record.UserName__c}</td>  
+            </tr>    
+        </apex:repeat>    
+        <apex:repeat value="{!contacts}" var="Contact">    
+            <tr>    
+                <td>{!Contact.Name}</td>
+                <td>{!Contact.ConcernedObject__c}</td>    
+                <td>{!Contact.Action__c}</td>    
+                <td>{!Contact.ChangeDate__c}</td> 
+                <td>{!Contact.UserName__c}</td>  
+            </tr>    
+        </apex:repeat>    
+        <apex:repeat value="{!contracts}" var="Contract">    
+            <tr>    
+                <td>{!Contract.Name}</td>
+                <td>{!Contract.ConcernedObject__c}</td>    
+                <td>{!Contract.Action__c}</td>    
+                <td>{!Contract.ChangeDate__c}</td> 
+                <td>{!Contract.UserName__c}</td>  
+            </tr>    
+        </apex:repeat>    
+        <apex:repeat value="{!leads}" var="Lead">    
+            <tr>    
+                <td>{!Lead.Name}</td>
+                <td>{!Lead.ConcernedObject__c}</td>    
+                <td>{!Lead.Action__c}</td>    
+                <td>{!Lead.ChangeDate__c}</td> 
+                <td>{!Lead.UserName__c}</td>  
+            </tr>    
+        </apex:repeat>    
+        <apex:repeat value="{!opportunities}" var="Opportunity">    
+            <tr>    
+                <td>{!Opportunity.Name}</td>
+                <td>{!Opportunity.ConcernedObject__c}</td>    
+                <td>{!Opportunity.Action__c}</td>    
+                <td>{!Opportunity.ChangeDate__c}</td> 
+                <td>{!Opportunity.UserName__c}</td>  
+            </tr>    
+        </apex:repeat>    
+        <apex:repeat value="{!products}" var="Product">    
+            <tr>    
+                <td>{!Product.Name}</td>
+                <td>{!Product.ConcernedObject__c}</td>    
+                <td>{!Product.Action__c}</td>    
+                <td>{!Product.ChangeDate__c}</td> 
+                <td>{!Product.UserName__c}</td>  
+            </tr>    
+        </apex:repeat>    
+        
+    </table>    
+    <center>
+        <p>Ce Mail est automatique</p>
+    </center>
+</apex:page>
